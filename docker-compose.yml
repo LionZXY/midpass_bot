@@ -1,0 +1,10 @@
+services:
+  mc_gtnh:
+    image: lionzxy/midpass_bot:latest
+    restart: unless-stopped
+    environment:
+      AC_TOKEN: "HIGHSECRET"
+      EMAIL: "HIGHSECRET"
+      PASSWORD: "HIGHSECRET"
+      TG_TOKEN: "TG_TOKEN"
+      TG_CHATS: "TG_CHATS"
