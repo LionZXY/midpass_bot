@@ -2,6 +2,8 @@ FROM node:16-alpine
 
 ENV TZ=Europe/Moscow
 
+RUN apk add --no-cache bash
+
 WORKDIR /app
 COPY . /app/
 
