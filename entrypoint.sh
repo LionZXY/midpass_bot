@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "Start script:"
+date
+
 mkdir -p data/
 file=data/lasttimestamp.txt
 
@@ -23,4 +26,11 @@ sleep ${timestamp}
 
 echo $timestamp >$file
 
-node dist
+echo "Try run script..."
+
+if node dist; then
+    echo "The script was executed successfully"
+else
+    echo "Script failed, retry"
+    ./entrypoint.sh
+fi
