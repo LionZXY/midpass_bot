@@ -90,5 +90,5 @@ main().catch(err => {
   if(!(err instanceof LastRunError)) {
     log(err.message)
     tg?.send(`Error\n${err.message}`);
-  } 
+  } else throw err
 });
