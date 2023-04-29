@@ -24,13 +24,15 @@ echo "Wait $timestamp seconds"
 
 sleep ${timestamp}
 
-echo $timestamp >$file
-
 echo "Try run script..."
 
-if node dist; then
-    echo "The script was executed successfully"
-else
-    echo "Script failed, retry"
-    ./entrypoint.sh
-fi
+while ! node dist
+do
+    echo "Script failed, retry after 10 seconds..."
+    timestamp=$(expr $timestamp + 10)
+    sleep 10
+done
+
+echo "The script was executed successfully"
+
+echo $timestamp >$file
