@@ -1,7 +1,9 @@
 services:
-  mc_gtnh:
+  midpass:
     image: lionzxy/midpass_bot:latest
     restart: unless-stopped
+    volumes:
+      - ./data:/app/data
     environment:
       AC_TOKEN: "HIGHSECRET"
       EMAIL: "HIGHSECRET"
