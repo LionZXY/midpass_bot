@@ -29,8 +29,8 @@ echo "Try run script..."
 while ! node dist
 do
     echo "Script failed, retry after 60 seconds..."
-    timestamp=$(expr $timestamp + 60)
-    sleep 60
+    timestamp=$(expr $timestamp + 300)
+    sleep 300
 done
 
 echo "The script was executed successfully"
