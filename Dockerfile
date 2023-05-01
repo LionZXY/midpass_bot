@@ -14,6 +14,6 @@ RUN npm install
 COPY . /app/
 
 RUN npm run build
-RUN echo "25 10 * * * cd /app/ && ./entrypoint.sh" >> /var/spool/cron/crontabs/root
+RUN echo "35 10 * * * cd /app/ && ./entrypoint.sh" >> /var/spool/cron/crontabs/root
 
 CMD crond -f -l 2
