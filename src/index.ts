@@ -41,13 +41,17 @@ class LastRunError extends Error {
 }
 
 const checkLastRun = () => {
-  const LASTRUN_FILENAME = './lastrun';
+  const LASTRUN_FILENAME = './data/lastrun';
 
   if(fs.existsSync(LASTRUN_FILENAME)) {
     const content = fs.readFileSync(LASTRUN_FILENAME, 'utf8');
     if(Date.now() - parseInt(content) < 1000 * 60 * 60 * 24 + 1000 * 60 * 10) {
       throw new LastRunError();
     }
+  }
+
+  if (!fs.existsSync('./data')) {
+    fs.mkdirSync('./data')
   }
   
   fs.writeFileSync(LASTRUN_FILENAME, ''+Date.now());
