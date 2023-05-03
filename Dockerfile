@@ -16,4 +16,4 @@ COPY . /app/
 
 RUN npm run build
 
-CMD echo "$CRON_ * * * cd /app/ && ./entrypoint.sh" > /var/spool/cron/crontabs/root && crond -f -l 2
+CMD echo "$CRON_TIME * * * cd /app/ && ./entrypoint.sh" > /var/spool/cron/crontabs/root && crond -f -l 2
