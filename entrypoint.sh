@@ -26,11 +26,17 @@ sleep ${timestamp}
 
 echo "Try run script..."
 
+increasing_delay=300
 while ! node dist
 do
-    echo "Script failed, retry after 5 minutes..."
-    timestamp=$(expr $timestamp + 300)
-    sleep 300
+    echo "Script failed, retry after ${increasing_delay} seconds..."
+    timestamp=$(expr $timestamp + $increasing_delay)
+    sleep $increasing_delay
+    increasing_delay=$(expr $increasing_delay * 2)
+    if (( $increasing_delay > 86400 )); then
+        echo "Sleep more than 1 day ($increasing_delay), so just exit"
+        exit 1
+    fi
 done
 
 echo "The script was executed successfully"

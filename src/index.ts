@@ -58,7 +58,7 @@ const checkLastRun = () => {
 }
 
 const main = async () => {
-  checkLastRun();
+  //checkLastRun();
 
   await site.login(process.env.EMAIL!, process.env.PASSWORD!);
 
