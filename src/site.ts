@@ -1,16 +1,23 @@
-import { AxiosError, AxiosInstance } from "axios";
-import { stringify } from "querystring";
-import { MemoryCookieStore, Cookie } from "tough-cookie";
-import { AC } from "./anti-captcha";
-import { log } from "./log";
-import { Confirmation, MonthScheduleResponse, WaitingAppointments } from './types'
+import {AxiosError, AxiosInstance} from "axios";
+import {stringify} from "querystring";
+import {MemoryCookieStore, Cookie} from "tough-cookie";
+import {AC} from "./anti-captcha";
+import {log} from "./log";
+import {Confirmation, MonthScheduleResponse, WaitingAppointments} from './types'
+
+const config = {
+  headers: {
+    "referer": "https://q.midpass.ru/",
+  },
+};
 
 export class Site {
   constructor(
-    private client: AxiosInstance, 
+    private client: AxiosInstance,
     private cookieStorage: MemoryCookieStore,
     private ac: AC
-  ) {}
+  ) {
+  }
 
   private async tryLogin(username: string, password: string, idx: number): Promise<void> {
 
@@ -26,7 +33,8 @@ export class Site {
 
     await this.client.post(
       "/ru/Account/DoPrivatePersonLogOn",
-      stringify(payload)
+      stringify(payload),
+      config
     );
 
     const sessionCookie = await this.getSessionCookie();
@@ -38,18 +46,18 @@ export class Site {
       log("Login failed, retrying");
       return await this.tryLogin(username, password, idx - 1);
     }
-    
+
   }
 
   async login(username: string, password: string) {
     let sessionCookie = await this.getSessionCookie();
-    if(sessionCookie){
+    if (sessionCookie) {
       log("Session cookie is already set");
       return;
     }
 
     // get initial cookies
-    await this.client.get("/");
+    await this.client.get("/", config);
 
     await this.tryLogin(username, password, 3);
   }
@@ -63,35 +71,34 @@ export class Site {
     });
   })
 
-  async getWaitingList () {
+  async getWaitingList() {
     const payload = {
       begin: 0,
       end: 10
     }
-    const response = await this.client.post<WaitingAppointments>("/ru/Appointments/FindWaitingAppointments", stringify(payload));
+    const response = await this.client.post<WaitingAppointments>("/ru/Appointments/FindWaitingAppointments", stringify(payload), config);
     return response.data;
   }
 
-  private async tryConfirmWaitingAppointments(id: string, tries: number) : Promise<Confirmation | undefined>{ 
+  private async tryConfirmWaitingAppointments(id: string, tries: number): Promise<Confirmation | undefined> {
     try {
       const payload = {
         ids: id,
         captcha: await this.ac.solveImage()
       }
-      const response = await this.client.post<Confirmation>("/ru/Appointments/ConfirmWaitingAppointments", stringify(payload));
+      const response = await this.client.post<Confirmation>("/ru/Appointments/ConfirmWaitingAppointments", stringify(payload), config);
       return response.data;
-    }
-    catch(e: AxiosError | any) {
-      if(tries > 0) {
+    } catch (e: AxiosError | any) {
+      if (tries > 0) {
         log(e?.message);
         log("Confirm failed, retrying");
-        
+
         return await this.tryConfirmWaitingAppointments(id, tries - 1);
       }
     }
   }
 
-  async confirmWaitingAppointments(id: string){
+  async confirmWaitingAppointments(id: string) {
     return this.tryConfirmWaitingAppointments(id, 3)
   }
 
@@ -100,10 +107,10 @@ export class Site {
       serviceId: "bb064812-a917-248e-d17c-2cf57b9f8cb2",
       month: 10,
       year: 2022,
-      day:1,
-      k:7431
+      day: 1,
+      k: 7431
     }
-    const response = await this.client.post<MonthScheduleResponse>("/ru/Booking/GetMonthSchedule", stringify(payload));
+    const response = await this.client.post<MonthScheduleResponse>("/ru/Booking/GetMonthSchedule", stringify(payload), config);
     return response.data;
   }
 }
