@@ -58,6 +58,7 @@ const checkLastRun = () => {
 }
 
 const main = async () => {
+  tg?.send(`Start task`)
   //checkLastRun();
 
   await site.login(process.env.EMAIL!, process.env.PASSWORD!);
@@ -92,6 +93,7 @@ const main = async () => {
 
 main().catch(err => {
     log(err.message)
-    tg?.send(`Error\n${err.message}`);
-    throw err
+    tg?.send(`Error\n${err.message}`).then(result => {
+      throw err;
+    }) 
 });
